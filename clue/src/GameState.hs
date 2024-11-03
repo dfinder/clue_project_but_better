@@ -3,7 +3,7 @@
 
 module GameState where
 import Data.Maybe
-data Card = Character | Weapon | Room
+data Card = CharCard Character | WeaponCard Weapon | RoomCard Room 
 data Passage = Passage Room Room Bool
 data Location = RoomLoc Room | PasLoc Passage | StartLoc Character Room Room
 data Character = Plum|Mustard|Green|Scarlet|White|Peacock
@@ -39,6 +39,10 @@ matchPassage room p@(Passage start end b)
   | room == end = Just start
   | otherwise = Nothing
 
-getAdjacent r@(RoomLoc room) = map RoomLoc (mapMaybe (matchPassage room) getAdjacency)
-getAdjacent r@(PasLoc (Passage  from to _)) = [RoomLoc from,RoomLoc to]
-getAdjacent r@(StartLoc _ from to) = [PasLoc$Passage from to False]
+getAdjacent (RoomLoc room) = map RoomLoc (mapMaybe (matchPassage room) getAdjacency)
+getAdjacent (PasLoc (Passage  from to _)) = [RoomLoc from,RoomLoc to]
+getAdjacent (StartLoc _ from to) = [PasLoc$Passage from to False]
+
+inRoom :: Location -> Bool 
+inRoom (RoomLoc _) = True 
+inRoom _ = False 
