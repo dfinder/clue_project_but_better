@@ -12,20 +12,14 @@ charCards ::[Character]
 charCards = shuffleCards characters seed []
 weapons :: [Weapon]
 weapons = [Candlestick,Dagger,Pipe,Revolver,Rope,Wrench]
-
 weaponCards :: [Weapon]
 weaponCards  = shuffleCards weapons seed []
 rooms :: [Room]
 rooms = [Kitchen,Ball,Conservatory,Billard,Library,Study,Dining,Hall,Lounge]
-
 roomCards :: [Room]
-roomCards  = shuffleCards  rooms seed []
+roomCards  = shuffleCards rooms seed []
 seed::Int
 seed = 40
-
-giveList :: [Int]
-giveList = [8,9,4,5,2]
-
 
 selectWinCon::((Character,Weapon,Room),[Card])
 selectWinCon  =  let
@@ -38,11 +32,9 @@ constructHands i [[]] = constructHands (i-1) [[]]
 constructHands 0 l = l
 constructHands i l = constructHands (i-1) [[]]++l
 
-
 --Cyclic player list
 rotate:: Int->[a]->[a]
 rotate n xs = bs ++ as where (as, bs) = splitAt n xs
--- (constructHands (length player_list) [])
 
 shuffleCards:: [a]->Int->[a]->[a]
 shuffleCards [] _ shuffled = shuffled
@@ -52,7 +44,8 @@ setupHands 0 = [[]]
 setupHands count = setupHands (count-1)++[[]]
 distributeRemainingCards:: [Card]->Int->[[Card]]
 distributeRemainingCardsRec:: [Card]->[[Card]]->[[Card]]
-distributeRemainingCards deck player_count = distributeRemainingCardsRec deck (cycle (setupHands player_count))
+distributeRemainingCards deck player_count = distributeRemainingCardsRec deck (setupHands player_count)
 distributeRemainingCardsRec (top:heap) (top_hand:hands) = distributeRemainingCardsRec heap (hands++[top:top_hand])
 distributeRemainingCardsRec [] hands  = hands
-distributeRemainingCardsRec _ _ = [[CharCard Plum]]
+distributeRemainingCardsRec _ _ = undefined 
+--[[CharCard Plum]]

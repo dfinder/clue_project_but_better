@@ -1,5 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE BlockArguments #-}
+{-# OPTIONS_GHC -Wno-deferred-out-of-scope-variables #-}
 
 module GameState where
 import Data.Maybe
@@ -10,14 +11,14 @@ data Character = Plum|Mustard|Green|Scarlet|White|Peacock
 data Weapon = Candlestick|Dagger|Pipe|Revolver|Rope|Wrench
 data Room = Kitchen|Ball|Conservatory|Billard|Library|Study|Dining|Hall|Lounge deriving (Eq)
 getStarts :: [Location]
-getStarts = [     StartLoc Scarlet Hall Lounge ,
-                  StartLoc Mustard Dining Lounge,
-                  StartLoc White Ball Kitchen ,
-                  StartLoc Green Ball Conservatory,
-                  StartLoc Plum Study Library ,
-                  StartLoc Peacock Library Conservatory]
+getStarts = [ StartLoc Scarlet Hall Lounge ,
+              StartLoc Mustard Dining Lounge,
+              StartLoc White Ball Kitchen ,
+              StartLoc Green Ball Conservatory,
+              StartLoc Plum Study Library ,
+              StartLoc Peacock Library Conservatory]
 getAdjacency :: [Passage]
-getAdjacency = [  Passage Study Kitchen True,   --There should be 20 passages. 2 secrets, 12 normals, and 6 starting locations
+getAdjacency = [ Passage Study Kitchen True,   --There should be 20 passages. 2 secrets, 12 normals, and 6 starting locations
                    Passage Lounge Conservatory True,
                    Passage Study Hall False,
                    Passage Study Library False,
@@ -33,13 +34,15 @@ getAdjacency = [  Passage Study Kitchen True,   --There should be 20 passages. 2
                    Passage Ball Kitchen False ]
 getAdjacent :: Location -> [Location]
 --getAdjacent r@(RoomLoc a) = filter (\x-> let (start,end,secret)=x in x )
-matchPassage :: Room -> Passage -> Maybe Room
+matchPassage :: Room -> Passage -> Maybe Location
 matchPassage room p@(Passage start end b)
-  | room == start = Just end
-  | room == end = Just start
+  | b && room == start = Some RoomLoc end
+  | b && room == end = Some RoomLoc start
+  | room == start = Some PasLoc p
+  | room == end = Some PasLoc p
   | otherwise = Nothing
 
-getAdjacent (RoomLoc room) = map RoomLoc (mapMaybe (matchPassage room) getAdjacency)
+getAdjacent (RoomLoc room) = mapMaybe (matchPassage room) getAdjacency
 getAdjacent (PasLoc (Passage  from to _)) = [RoomLoc from,RoomLoc to]
 getAdjacent (StartLoc _ from to) = [PasLoc$Passage from to False]
 

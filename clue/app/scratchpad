@@ -1,0 +1,17 @@
+okay so we basically have like.... 6 basic functions 
+
+host/client
+select_character (characters will be selected in connection order)
+
+move 
+accuse
+guess
+read known info 
+check log 
+
+and it's:
+
+move then guess
+
+unless you teleported 
+
